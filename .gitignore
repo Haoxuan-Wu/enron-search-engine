@@ -1,8 +1,14 @@
 # dataset
 dataset/
 
+# output
+output/
+
 # 实验说明
 exp1.pdf
 
 # vscode
 .vscode/
+
+# 学习文件
+learning/
