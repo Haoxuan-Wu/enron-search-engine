@@ -6,8 +6,14 @@ import string
 # DATA_PATH = "../dataset/maildir"
 DATA_PATH = "../sub_dataset/maildir"
 DB_INDEX_PATH = "../output/index.db"
+STOPWORDS_PATH = "stopwords.txt"
 
 # HELPER FUNCTIONS
+
+# special pre_process for enron dataset
+def pre_process_enron(file):
+    pass
+    return file
 
 def strip_punct(file):
     punctre = re.compile('[%s]' % re.escape(string.punctuation))
@@ -16,7 +22,7 @@ def strip_punct(file):
 
 def stem_words(file):
     pass
-    return file
+    return file.lower()
 
 def exclude_stop_words(file):
     pass
@@ -47,7 +53,8 @@ def buildTextIndexAndInvIndex():
             
             with open(file_path) as f:
                 opened_file = f.read().replace('\n', ' ')
-            stripped_file = strip_punct(opened_file)
+            pre_processed_file = pre_process_enron(opened_file)
+            stripped_file = strip_punct(pre_processed_file)
             stemmed_file = stem_words(stripped_file)
             no_stop_word_file = exclude_stop_words(stemmed_file)
             prepared_file = no_stop_word_file
