@@ -13,3 +13,6 @@ exp1.pdf
 
 # 学习文件
 learning/
+
+# python
+__pycache__/
