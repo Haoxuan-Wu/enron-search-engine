@@ -7,6 +7,7 @@ output/
 
 # 实验说明
 exp1.pdf
+*.pptx
 
 # vscode
 .vscode/
