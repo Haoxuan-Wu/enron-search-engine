@@ -2,7 +2,7 @@ import sqlite3
 import collections
 import math
 
-from build_invindex import DB_INDEX_PATH, TEXT_NUM
+from build_invindex import DB_INDEX_PATH
 
 def search(query):
     # prepare query list
@@ -10,7 +10,8 @@ def search(query):
     query = query.replace(')', ' )')
     query = query.split(' ')
 
-    indexed_docIDs = [i+1 for i in range(TEXT_NUM)]
+    text_num = get_text_num()
+    indexed_docIDs = [i+1 for i in range(text_num)]
     results_stack = []
     postfix_queue = collections.deque(infix2postfix(query)) # get query in postfix notation as a queue
 
@@ -22,8 +23,6 @@ def search(query):
             # token = stemmer.stem(token) # stem the token
             # default empty list if not in dictionary
             result = search_token(token)
-            if not result: 
-                continue
         
         # else if AND operator
         elif (token == 'AND'):
@@ -120,8 +119,10 @@ def search_token(token):
                 FROM invindex
                 WHERE word = '{}' '''.format(token))
     result = c.fetchone()
-    docid_list = list(map(int, str(result).strip("(),'").split(' ')))
+    if result == None:
+        return []
 
+    docid_list = list(map(int, str(result).strip("(),'").split(' ')))
     conn.close()
     return docid_list
 
@@ -239,6 +240,16 @@ def boolean_AND(left_operand, right_operand):
 
     return result
 
+def get_text_num():
+    conn = sqlite3.connect(DB_INDEX_PATH)
+    c = conn.cursor()
+    c.execute('''SELECT value
+                FROM variables
+                WHERE name = 'text_num' ''')
+    result = int(c.fetchone()[0])
+    conn.close()
+    return result   
+
 # TEST FUNCTIONS
 
 def test_search_token(token):
@@ -246,4 +257,5 @@ def test_search_token(token):
     print(doclist)
 
 if __name__ == "__main__":
-    test_search_token("MessageID")
+    query_str = input("Please input your query: ")
+    print(search(query_str))

@@ -7,7 +7,6 @@ import string
 DATA_PATH = "../sub_dataset/maildir"
 DB_INDEX_PATH = "../output/index.db"
 STOPWORDS_PATH = "stopwords.txt"
-TEXT_NUM = 0
 
 # HELPER FUNCTIONS
 
@@ -99,7 +98,13 @@ def buildTextIndexAndInvIndex():
                         worddict[word][1].append(textID)
                 else:
                     worddict[word] = [1, [textID]]
-    TEXT_NUM = textID
+
+    c.execute('''DROP TABLE IF EXISTS variables''')
+    c.execute('''CREATE TABLE variables
+                (name TEXT PRIMARY KEY,
+                value TEXT)''')
+    t = ('text_num', textID)
+    c.execute('''INSERT INTO variables VALUES (?, ?)''', t)
     
     c.execute('''DROP TABLE IF EXISTS invindex''')
     c.execute('''CREATE TABLE invindex
