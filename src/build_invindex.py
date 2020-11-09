@@ -7,6 +7,7 @@ import string
 DATA_PATH = "../sub_dataset/maildir"
 DB_INDEX_PATH = "../output/index.db"
 STOPWORDS_PATH = "stopwords.txt"
+TEXT_NUM = 0
 
 # HELPER FUNCTIONS
 
@@ -93,11 +94,12 @@ def buildTextIndexAndInvIndex():
             words_in_file = prepared_file.split()
             for word in words_in_file:
                 if word in worddict:
-                    worddict[word][0] += 1
                     if worddict[word][1][-1] != textID:
+                        worddict[word][0] += 1
                         worddict[word][1].append(textID)
                 else:
                     worddict[word] = [1, [textID]]
+    TEXT_NUM = textID
     
     c.execute('''DROP TABLE IF EXISTS invindex''')
     c.execute('''CREATE TABLE invindex
@@ -120,7 +122,7 @@ def testIndexes():
     conn = sqlite3.connect(DB_INDEX_PATH)
     c = conn.cursor()
     c.execute('''SELECT * FROM invindex
-                LIMIT 1''')
+                LIMIT 3''')
     for row in c:
         print(row[0], row[1], row[2])
 
