@@ -2,7 +2,7 @@ import sqlite3
 import collections
 import math
 
-from build_invindex import DB_INDEX_PATH
+from build_index_and_matrix import DB_INDEX_PATH
 
 def search(query):
     # prepare query list
@@ -257,5 +257,5 @@ def test_search_token(token):
     print(doclist)
 
 if __name__ == "__main__":
-    query_str = input("Please input your query: ")
+    query_str = input("Please input your bool query (words connected with AND, OR, NOT): ")
     print(search(query_str))
