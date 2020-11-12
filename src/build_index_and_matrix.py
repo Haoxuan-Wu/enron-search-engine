@@ -14,7 +14,6 @@ DB_INDEX_PATH = "../output/index.db"
 WORD_INDEX_PATH = "../output/word_index.npy"
 # tfidf matrix for semantic search
 TFIDF_MAT_PATH = "../output/tfidf_mat.npy"
-STOPWORDS_PATH = "stopwords.txt"
 
 # HELPER FUNCTIONS
 
@@ -28,7 +27,8 @@ def pre_process_enron(file):
         A string with mail header removed
     """
     pre_processed_file = []
-    useless_header = ['message-id:', 'sent:', 'date:', 'from:', 'to:', 'cc:', 'mime-version:', 'content-type:', 'content-transfer-encoding:', 'bcc:', 'x-from:', 'x-to:', 'x-cc:', 'x-bcc:', 'x-folder:', 'x-origin:', 'x-filename:']
+    useless_header = ['message-id:', 'sent:', 'date:', 'from:', 'to:', 'cc:', 'mime-version:', 'content-type:', 'content-transfer-encoding:', 'bcc:', 'x-from:', 'x-to:', 'x-cc:', 'x-bcc:', 'x-folder:', 'x-origin:', 'x-filename:',
+    'sender:', 'x-mailer:', 'references:', 'x-mimetrack:']
     for line in file:
         line = line.lower() \
                 .replace(':=', ': ') \
@@ -140,7 +140,10 @@ def build_index_and_matrix():
             
             # file_encoding = get_file_encoding(file_path)
             with open(file_path) as f:
-                opened_file = f.readlines()
+                try:
+                    opened_file = f.readlines()
+                except:
+                    pass
             # 去邮件头
             pre_processed_file = pre_process_enron(opened_file)
             # 去标点
