@@ -12,5 +12,6 @@
 ## SETUP
 ```bash
 sudo pip3 install nltk
+# sudo pip3 install chardet
 # path nltk_data
 ```
