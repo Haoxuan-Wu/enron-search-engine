@@ -6,7 +6,6 @@
 
 ## BUG-FIX
 
-- 分词的时候把邮件的格式 (someone.someone@enron.com) 去掉
 
 ## SETUP
 ```bash
