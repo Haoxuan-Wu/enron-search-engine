@@ -12,6 +12,9 @@
 ## SETUP
 ```bash
 sudo pip3 install nltk
+python
+>> import nltk
+>> nltk.download('stopwords')
 # sudo pip3 install chardet
 # path nltk_data
 ```
