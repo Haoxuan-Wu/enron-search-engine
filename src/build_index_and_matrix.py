@@ -15,6 +15,8 @@ WORD_INDEX_PATH = "../output/word_index.npy"
 # tfidf matrix for semantic search
 TFIDF_MAT_PATH = "../output/tfidf_mat.npy"
 
+MAX_TERM_NUM = 1000
+
 # HELPER FUNCTIONS
 
 # special pre_process for enron dataset
@@ -158,6 +160,7 @@ def build_index_and_matrix():
             for word in words_in_file:
                 if word in worddict:
                     # the word's first appear in this file
+                    worddict[word][3] += 1
                     if worddict[word][1][-1] != textID:
                         worddict[word][0] += 1
                         worddict[word][1].append(textID)
@@ -167,8 +170,14 @@ def build_index_and_matrix():
                         worddict[word][2][-1] += 1
                 # the word appear for the first time
                 else:
-                    # [df, [Doc list], [tf list]]
-                    worddict[word] = [1, [textID], [1]]
+                    # [df, [Doc list], [tf list], total_frequency]
+                    worddict[word] = [1, [textID], [1], 1]
+
+    # keep noly MAX_TERM_NUM words
+    sorted_word_dict = sorted(worddict.items(), key=lambda d:d[1][3], reverse = True)
+    valid_word_dict = {}
+    for key, value in sorted_word_dict[0:MAX_TERM_NUM]:
+        valid_word_dict[key] = value
 
     c.execute('''DROP TABLE IF EXISTS variables''')
     c.execute('''CREATE TABLE variables
@@ -177,7 +186,7 @@ def build_index_and_matrix():
     text_num = textID
     t = ('text_num', text_num)
     c.execute('''INSERT INTO variables VALUES (?, ?)''', t)
-    t = ('word_num', len(worddict))
+    t = ('word_num', len(valid_word_dict))
     c.execute('''INSERT INTO variables VALUES (?, ?)''', t)
 
     # invindex for bool search
@@ -187,7 +196,7 @@ def build_index_and_matrix():
                     word_df INT,
                     textIDs TEXT);''')
     
-    for word, value in worddict.items():
+    for word, value in valid_word_dict.items():
         text_list = ' '.join(map(str, value[1]))
         t = (word, value[0], text_list)
         c.execute('''INSERT INTO invindex VALUES (?, ?, ?)''', t)
@@ -197,10 +206,10 @@ def build_index_and_matrix():
 
     # tf-idf matrix for semantic search
     print("total text num:", text_num)
-    word_arr = np.zeros(len(worddict), dtype='<U16')
-    tfidf_mat = np.zeros((len(worddict), text_num), dtype='float16')
+    word_arr = np.zeros(len(valid_word_dict), dtype='<U16')
+    tfidf_mat = np.zeros((len(valid_word_dict), text_num), dtype='float16')
     i = 0
-    for word, value in worddict.items():
+    for word, value in valid_word_dict.items():
         word_arr[i] = word
         j = 0
         for textID in value[1]:
