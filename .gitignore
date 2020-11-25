@@ -6,6 +6,7 @@ sub_dataset/
 output/
 
 # 实验说明
+img/
 exp1.pdf
 *.pptx
 
