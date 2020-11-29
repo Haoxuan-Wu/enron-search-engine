@@ -8,7 +8,7 @@
 ```bash
 pip install nltk
 pip install numpy
-pip install sqlite3
+pip install pysqlite3
 python
 >>> import nltk
 >>> nltk.download('stopwords')
